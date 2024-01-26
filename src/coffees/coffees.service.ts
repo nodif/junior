@@ -1,48 +1,33 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, Type } from '@prisma/client';
-import { DatabaseService } from 'src/database/database.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Coffee } from './coffee.entity';
 
 @Injectable()
 export class CoffeesService {
-  constructor(private readonly databaseService: DatabaseService) { }
+  constructor(
+      @InjectRepository(Coffee)
+      private readonly coffeeRepository: Repository<Coffee>,
+  ) {}
 
-  async create(createCoffeeDto: Prisma.CoffeeCreateInput) {
-    return this.databaseService.coffee.create({
-      data: createCoffeeDto
-    })
+  findAll(): Promise<Coffee[]> {
+    return this.coffeeRepository.find();
   }
 
-  async findAll(type?: Type) {
-    if (type) return this.databaseService.coffee.findMany({
-      where: {
-        type,
-      }
-    })
-    return this.databaseService.coffee.findMany()
+  findOne(id: number): Promise<Coffee> {
+    return this.coffeeRepository.findOneBy({id});
   }
 
-  async findOne(id: number) {
-    return this.databaseService.coffee.findUnique({
-      where: {
-        id,
-      }
-    })
+  create(createCoffeeDto: Partial<Coffee>): Promise<Coffee> {
+    const newCoffee = this.coffeeRepository.create(createCoffeeDto);
+    return this.coffeeRepository.save(newCoffee);
   }
 
-  async update(id: number, updateCoffeeDto: Prisma.CoffeeUpdateInput) {
-    return this.databaseService.coffee.update({
-      where: {
-        id,
-      },
-      data: updateCoffeeDto,
-    })
+  update(id: number, updateCoffeeDto: Partial<Coffee>): Promise<Coffee> {
+    return this.coffeeRepository.save({ id, ...updateCoffeeDto });
   }
 
-  async delete(id: number) {
-    return this.databaseService.coffee.delete({
-      where: {
-        id,
-      }
-    })
+  async delete(id: number): Promise<void> {
+    await this.coffeeRepository.delete(id);
   }
 }

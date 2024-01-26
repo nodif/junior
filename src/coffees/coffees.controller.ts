@@ -1,40 +1,33 @@
-import {Controller, Get, Post, Body, Patch, Param, Delete, Query, Ip, ParseIntPipe} from '@nestjs/common';
+import {Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe} from '@nestjs/common';
 import { CoffeesService } from './coffees.service';
-import { Prisma, Type } from '@prisma/client';
-import { Throttle, SkipThrottle } from '@nestjs/throttler'
-import { MyLoggerService } from 'src/my-logger/my-logger.service';
+import { Coffee } from './coffee.entity';
 
-@SkipThrottle()
 @Controller('coffees')
 export class CoffeesController {
-  constructor(private readonly coffeesService: CoffeesService) { }
-  private readonly logger = new MyLoggerService(CoffeesController.name)
-  
-  @Post()
-  create(@Body() createCoffeeDto: Prisma.CoffeeCreateInput) {
-    return this.coffeesService.create(createCoffeeDto);
-  }
+  constructor(private readonly coffeesService: CoffeesService) {}
 
-  @SkipThrottle({ default: false })
   @Get()
-  findAll(@Ip() ip: string, @Query('type') type?: Type) {
-    this.logger.log(`Request for ALL Coffees\t${ip}`, CoffeesController.name)
-    return this.coffeesService.findAll(type);
+  findAll(): Promise<Coffee[]> {
+    return this.coffeesService.findAll();
   }
 
-  @Throttle({ short: { ttl: 1000, limit: 1 }})
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<Coffee> {
     return this.coffeesService.findOne(id);
   }
 
+  @Post()
+  create(@Body() createCoffeeDto: Partial<Coffee>): Promise<Coffee> {
+    return this.coffeesService.create(createCoffeeDto);
+  }
+
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateCoffeeDto: Prisma.CoffeeUpdateInput) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateCoffeeDto: Partial<Coffee>): Promise<Coffee> {
     return this.coffeesService.update(id, updateCoffeeDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.coffeesService.delete(id);
   }
 }
