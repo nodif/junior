@@ -1,4 +1,3 @@
-// src/app.module.ts
 import {Module} from '@nestjs/common';
 import {TypeOrmModule} from '@nestjs/typeorm';
 import {Coffee} from './coffees/coffee.entity';
@@ -10,9 +9,6 @@ import {AppController} from './app.controller';
 import {AppService} from './app.service';
 import {APP_GUARD} from '@nestjs/core';
 import {Programmer} from "./programmer/programer.entity";
-import {ProgrammerController} from "./programmer/programmer.controller";
-import {ProgrammerService} from "./programmer/programmer.service";
-import {ProgrammerMapper} from "./programmer/programmer.mapper";
 import {ProgrammerModule} from "./programmer/programmer.module";
 
 @Module({

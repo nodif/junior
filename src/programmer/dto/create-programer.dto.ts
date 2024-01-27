@@ -1,5 +1,4 @@
-// create-programmer.dto.ts
-import {IsString, IsEnum, IsNotEmpty, IsOptional, IsEmail, IsNumber, IsArray, ValidateNested} from 'class-validator';
+import {IsArray, IsEmail, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested} from 'class-validator';
 import {Role} from "../enum/role.enum";
 import {Type} from "class-transformer";
 
